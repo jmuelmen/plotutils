@@ -43,3 +43,22 @@ scale_x_geo_zonmean <- function() {
                                           0,
                                           as.expression(sapply(c(60), function(x) { bquote(.(x)*degree * N) } ))))
 }
+
+#' World map outline 
+#'
+#' This functions returns the outline of the continents and major
+#' islands, in lat/lon projection, WGS84 datum, 1:110M resolution,
+#' from Natural Earth, as a \code{\link{geom_polygon}} that can be
+#' added to a \code{\link{ggplot}}.
+#' 
+#' @param col Line color
+#' @param fill Fill color
+#' @param lwd Line width
+#' @param ... Other arguments passed to \code{\link{geom_polygon}}
+#' @return A \code{geom_polygon} which can be added to a \code{ggplot}
+#' @export
+geom_world_polygon <- function(col = "black", fill = NA, lwd = 0.5, ...) {
+    ggplot2::geom_polygon(ggplot2::aes(x=long, y=lat, group=group),
+                          data = ggplot2::fortify(shp), 
+                          col = col, fill = fill, lwd = lwd, ...)
+}
