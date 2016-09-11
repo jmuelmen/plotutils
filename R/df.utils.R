@@ -40,8 +40,14 @@ bin_ <- function(df, var, varname, bins) {
     ##     ## adjust so nobody falls off the edge
     ##     x[which.min(x)] <- min.x + diff(bins)[1] * 1e-3 
     ## }
-    x.bin <- as.integer(cut(x, bins))
-    x.width <- diff(bins)[x.bin]
+    ## diff.bins <- diff(bins)
+    ## x.bin <- as.integer(cut(replace(x, x == bins[1], x + 1e-6 * diff.bins[1]),
+    ##                         ## make lowest bin edge inclusive
+    ##                         bins))
+    x.bin <- replace(as.integer(cut(x, bins)),
+                     ## make lowest bin edge inclusive
+                     x == bins[1], 1)
+    x.width <- diff.bins[x.bin]
     x.pos <- stats::filter(bins, c(0.5, 0.5))[x.bin]
     xx <- data.frame(x.width, x.pos)
     
