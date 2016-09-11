@@ -2,10 +2,12 @@
 % Please edit documentation in R/df.utils.R
 \name{bin}
 \alias{bin}
-\title{Bin a variable in a data frame
-## The data frame is expanded by the bin center and bin width.  "var"}
+\alias{discretize}
+\title{Bin a variable in a data frame}
 \usage{
 bin(df, var, bins)
+
+discretize(df, var, bins, as_factor = FALSE)
 }
 \arguments{
 \item{df}{Data frame.  Evaluation occurs with \code{df} as the
@@ -19,14 +21,29 @@ If a single number, \code{pretty(n = bins)} is used on the
 result of evaluating \code{var} to determine bins; if a vector,
 they are taken as bin edges; if an expression, it is lazily
 evaluated and the result used as bin edges.}
+
+\item{as_factor}{(for \code{discretize()}.) Boolean.  Return
+discretized values as numeric (\code{as_factor = FALSE}) or as
+factor (\code{as_factor = FALSE}) in the style of \code{cut()}.}
 }
 \value{
 A data frame that contains \code{df} and two new variables,
     \code{x_bin} indicating which bin the observation falls into
     and \code{x_width} indicating the width of that bin.
+
+A data frame with "var" replaced by its discretized version
 }
 \description{
-Bin a variable in a data frame
-## The data frame is expanded by the bin center and bin width.  "var"
+The data frame is expanded by the bin center and bin width.  "var"
+is lazily evaluated.  "bins" can be a single number, in which case
+\code{pretty()} is used to get that many bins spanning the range of
+"var".
 }
+\section{Functions}{
+\itemize{
+\item \code{discretize}: The functions \code{bin()} and \code{discretize()}
+differ in their return values: \code{bin()} adds two new
+columns, bin center and bin width; \code{discretize()} replaces
+"var" with its discretized version, either as numeric or factor.
+}}
 

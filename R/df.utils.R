@@ -1,9 +1,12 @@
 ## Function to bin variables in a data frame
 
 #' Bin a variable in a data frame
-#' ## The data frame is expanded by the bin center and bin width.  "var"
-## is lazily evaluated.  "bins" can be a single number, in which case
-## pretty() is used to get that many bins spanning the range of "var"
+#' 
+#' The data frame is expanded by the bin center and bin width.  "var"
+#' is lazily evaluated.  "bins" can be a single number, in which case
+#' \code{pretty()} is used to get that many bins spanning the range of
+#' "var".  
+#' 
 #' @param df Data frame.  Evaluation occurs with \code{df} as the
 #'     environment.
 #' @param var Expression.  The expression is lazily evaluated.  The
@@ -53,4 +56,47 @@ bin_ <- function(df, var, varname, bins) {
     
     names(xx) <- sprintf(c("%s_width", "%s_bin"), varname)
     cbind(df, xx)
+}
+
+#' @param as_factor (for \code{discretize()}.) Boolean.  Return
+#'     discretized values as numeric (\code{as_factor = FALSE}) or as
+#'     factor (\code{as_factor = FALSE}) in the style of \code{cut()}.
+#' @return A data frame with "var" replaced by its discretized version
+#' @describeIn bin The functions \code{bin()} and \code{discretize()}
+#'     differ in their return values: \code{bin()} adds two new
+#'     columns, bin center and bin width; \code{discretize()} replaces
+#'     "var" with its discretized version, either as numeric or factor.
+#' @export
+discretize <- function(df, var, bins, as_factor = FALSE) {
+    x <- lazyeval::lazy(var)
+    bins <- lazyeval::lazy(bins)
+    discretize_(df, x, as.character(x$expr), bins, as_factor)
+}
+
+discretize_ <- function(df, var, varname, bins, as_factor) {
+    ## if (require(lazyeval))
+    ##     x <- lazyeval::lazy_eval(var, df)
+    ## else x <- var
+    x <- lazyeval::lazy_eval(var, df)
+    
+    bins <- lazyeval::lazy_eval(bins, df)
+    
+    if (length(bins) == 1) {
+        bins <- pretty(range(x, na.rm = TRUE), bins)
+    }
+    if (as_factor) {
+        ## return factor a la cut()
+        x.bin <- cut(x, bins)
+        x.pos <- replace(x.bin, 
+                         ## make lowest bin edge inclusive
+                         x == bins[1], levels(x.bin)[1])
+    } else {
+        ## return midpoint of bins
+        x.bin <- replace(as.integer(cut(x, bins)),
+                         ## make lowest bin edge inclusive
+                         x == bins[1], 1)
+        x.pos <- stats::filter(bins, c(0.5, 0.5))[x.bin]
+    }
+    df[, varname] <- x.pos
+    df
 }
