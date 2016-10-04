@@ -43,7 +43,7 @@ bin_ <- function(df, var, varname, bins) {
     ##     ## adjust so nobody falls off the edge
     ##     x[which.min(x)] <- min.x + diff(bins)[1] * 1e-3 
     ## }
-    ## diff.bins <- diff(bins)
+    diff.bins <- diff(bins)
     ## x.bin <- as.integer(cut(replace(x, x == bins[1], x + 1e-6 * diff.bins[1]),
     ##                         ## make lowest bin edge inclusive
     ##                         bins))
