@@ -54,6 +54,7 @@ scale_x_geo_zonmean <- function() {
 #' @param col Line color
 #' @param fill Fill color
 #' @param lwd Line width
+#' @param highres Logical.  High resolution (1:10m) or default (1:110m)
 #' @param ... Other arguments passed to \code{\link{geom_polygon}}
 #' @return A \code{geom_polygon} which can be added to a \code{ggplot}
 #'
@@ -66,12 +67,16 @@ scale_x_geo_zonmean <- function() {
 #'     geom_raster() +
 #'     geom_world_polygon() +
 #'     scale_x_geo() + scale_y_geo()
-geom_world_polygon <- function(col = "black", fill = NA, lwd = 0.5, ...) {
+geom_world_polygon <- function(col = "black", fill = NA, lwd = 0.5, highres = FALSE, ...) {
     ggplot2::geom_polygon(ggplot2::aes(x=long, y=lat, group=group),
-                          data = rbind(ggplot2::fortify(shp) %>%
+                          data = rbind(ggplot2::fortify(ifelse(highres,
+                                                               shp.highres,
+                                                               shp)) %>%
                                        mutate(id = sprintf("land.%s", id),
                                               group = sprintf("land.%s", group)),
-                                       ggplot2::fortify(shp.lakes) %>%
+                                       ggplot2::fortify(ifelse(highres,
+                                                               shp.highres.lakes,
+                                                               shp.lakes)) %>%
                                        mutate(id = sprintf("lakes.%s", id),
                                               group = sprintf("lakes.%s", group))),
                           col = col, fill = fill, lwd = lwd, ...)

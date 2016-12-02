@@ -4,7 +4,8 @@
 \alias{geom_world_polygon}
 \title{World map outline}
 \usage{
-geom_world_polygon(col = "black", fill = NA, lwd = 0.5, ...)
+geom_world_polygon(col = "black", fill = NA, lwd = 0.5, highres = FALSE,
+  ...)
 }
 \arguments{
 \item{col}{Line color}
@@ -12,6 +13,8 @@ geom_world_polygon(col = "black", fill = NA, lwd = 0.5, ...)
 \item{fill}{Fill color}
 
 \item{lwd}{Line width}
+
+\item{highres}{Logical.  High resolution (1:10m) or default (1:110m)}
 
 \item{...}{Other arguments passed to \code{\link{geom_polygon}}}
 }
