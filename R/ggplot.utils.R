@@ -56,9 +56,23 @@ scale_x_geo_zonmean <- function() {
 #' @param lwd Line width
 #' @param ... Other arguments passed to \code{\link{geom_polygon}}
 #' @return A \code{geom_polygon} which can be added to a \code{ggplot}
+#'
 #' @export
+#'
+#' @examples
+#' expand.grid(lon = -180:180, lat = -90:90) %>%
+#'     mutate(fill = cos(pi * lat / 180)) %>%
+#'     ggplot(aes(x = lon, y = lat, fill = fill)) +
+#'     geom_raster() +
+#'     geom_world_polygon() +
+#'     scale_x_geo() + scale_y_geo()
 geom_world_polygon <- function(col = "black", fill = NA, lwd = 0.5, ...) {
     ggplot2::geom_polygon(ggplot2::aes(x=long, y=lat, group=group),
-                          data = ggplot2::fortify(shp), 
+                          data = rbind(ggplot2::fortify(shp) %>%
+                                       mutate(id = sprintf("land.%s", id),
+                                              group = sprintf("land.%s", group)),
+                                       ggplot2::fortify(shp.lakes) %>%
+                                       mutate(id = sprintf("lakes.%s", id),
+                                              group = sprintf("lakes.%s", group))),
                           col = col, fill = fill, lwd = lwd, ...)
 }

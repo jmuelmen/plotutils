@@ -24,4 +24,12 @@ islands, in lat/lon projection, WGS84 datum, 1:110M resolution,
 from Natural Earth, as a \code{\link{geom_polygon}} that can be
 added to a \code{\link{ggplot}}.
 }
+\examples{
+expand.grid(lon = -180:180, lat = -90:90) \%>\%
+    mutate(fill = cos(pi * lat / 180)) \%>\%
+    ggplot(aes(x = lon, y = lat, fill = fill)) +
+    geom_raster() +
+    geom_world_polygon() +
+    scale_x_geo() + scale_y_geo()
+}
 
