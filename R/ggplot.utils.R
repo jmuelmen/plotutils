@@ -69,15 +69,20 @@ scale_x_geo_zonmean <- function() {
 #'     scale_x_geo() + scale_y_geo()
 geom_world_polygon <- function(col = "black", fill = NA, lwd = 0.5, highres = FALSE, ...) {
     ggplot2::geom_polygon(ggplot2::aes(x=long, y=lat, group=group),
-                          data = rbind(ggplot2::fortify(ifelse(highres,
-                                                               shp.highres,
-                                                               shp)) %>%
-                                       mutate(id = sprintf("land.%s", id),
-                                              group = sprintf("land.%s", group)),
-                                       ggplot2::fortify(ifelse(highres,
-                                                               shp.highres.lakes,
-                                                               shp.lakes)) %>%
-                                       mutate(id = sprintf("lakes.%s", id),
-                                              group = sprintf("lakes.%s", group))),
+                          data = if (highres) {
+                                     rbind(ggplot2::fortify(shp.highres) %>%
+                                           mutate(id = sprintf("land.%s", id),
+                                                  group = sprintf("land.%s", group)),
+                                           ggplot2::fortify(shp.highres.lakes) %>%
+                                           mutate(id = sprintf("lakes.%s", id),
+                                                  group = sprintf("lakes.%s", group)))
+                                 } else {
+                                     rbind(ggplot2::fortify(shp) %>%
+                                           mutate(id = sprintf("land.%s", id),
+                                                  group = sprintf("land.%s", group)),
+                                           ggplot2::fortify(shp.lakes) %>%
+                                           mutate(id = sprintf("lakes.%s", id),
+                                                  group = sprintf("lakes.%s", group)))
+                                 },
                           col = col, fill = fill, lwd = lwd, ...)
 }
