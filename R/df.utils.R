@@ -58,14 +58,17 @@ bin_ <- function(df, var, varname, bins) {
     cbind(df, xx)
 }
 
-#' @param as_factor (for \code{discretize()}.) Boolean.  Return
-#'     discretized values as numeric (\code{as_factor = FALSE}) or as
-#'     factor (\code{as_factor = FALSE}) in the style of \code{cut()}.
+#' @param as_factor (for \code{discretize()}.) Logical or character.
+#'     Return discretized values as numeric (\code{as_factor =
+#'     FALSE}), or as factor (\code{as_factor = TRUE}) in the style of
+#'     \code{cut()}, or as an ordered factor (\code{as_factor =
+#'     "ordered"}).
 #' @return A data frame with "var" replaced by its discretized version
 #' @describeIn bin The functions \code{bin()} and \code{discretize()}
 #'     differ in their return values: \code{bin()} adds two new
 #'     columns, bin center and bin width; \code{discretize()} replaces
-#'     "var" with its discretized version, either as numeric or factor.
+#'     "var" with its discretized version, either as numeric, factor,
+#'     or ordered factor.
 #' @export
 discretize <- function(df, var, bins, as_factor = FALSE) {
     x <- lazyeval::lazy(var)
@@ -84,9 +87,12 @@ discretize_ <- function(df, var, varname, bins, as_factor) {
     if (length(bins) == 1) {
         bins <- pretty(range(x, na.rm = TRUE), bins)
     }
-    if (as_factor) {
+    if (class(as_factor) == "character" ||
+        class(as_factor) == "logical" && as_factor) {
         ## return factor a la cut()
-        x.bin <- cut(x, bins)
+        x.bin <- cut(x, bins, ordered_result =
+                                  class(as_factor) == "character" &&
+                                  as_factor == "ordered")
         x.pos <- replace(x.bin, 
                          ## make lowest bin edge inclusive
                          x == bins[1], levels(x.bin)[1])

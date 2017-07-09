@@ -22,9 +22,11 @@ result of evaluating \code{var} to determine bins; if a vector,
 they are taken as bin edges; if an expression, it is lazily
 evaluated and the result used as bin edges.}
 
-\item{as_factor}{(for \code{discretize()}.) Boolean.  Return
-discretized values as numeric (\code{as_factor = FALSE}) or as
-factor (\code{as_factor = FALSE}) in the style of \code{cut()}.}
+\item{as_factor}{(for \code{discretize()}.) Logical or character.
+Return discretized values as numeric (\code{as_factor =
+FALSE}), or as factor (\code{as_factor = TRUE}) in the style of
+\code{cut()}, or as an ordered factor (\code{as_factor =
+"ordered"}).}
 }
 \value{
 A data frame that contains \code{df} and two new variables,
@@ -44,6 +46,7 @@ is lazily evaluated.  "bins" can be a single number, in which case
 \item \code{discretize}: The functions \code{bin()} and \code{discretize()}
 differ in their return values: \code{bin()} adds two new
 columns, bin center and bin width; \code{discretize()} replaces
-"var" with its discretized version, either as numeric or factor.
+"var" with its discretized version, either as numeric, factor,
+or ordered factor.
 }}
 
