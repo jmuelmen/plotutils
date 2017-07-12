@@ -10,38 +10,76 @@
 #' @name scale_geo
 NULL
 
+using.tizk <- function() any(grepl("tikz", names(dev.cur())))
+
 #' @describeIn scale_geo longitude (x) axis
 #' @export
 scale_x_geo <- function(facet = FALSE) {
-    ggplot2::scale_x_continuous("", expand = c(0,0), 
-                               breaks = if (facet) seq(-180, 120, 60) else seq(-180, 180, 60),
-                               labels = if (facet) c(bquote(180*degree),
-                                                     as.expression(sapply(seq(-120, -60, by = 60), function(x) { x <- -x; bquote(.(x)*degree * W) } )),
-                                                     0,
-                                                     as.expression(sapply(seq(60, 120, by = 60), function(x) { bquote(.(x)*degree * E) } )))
-                                        else c(bquote(180*degree),
-                                               as.expression(sapply(seq(-120, -60, by = 60), function(x) { x <- -x; bquote(.(x)*degree * W) } )),
-                                               0,
-                                               as.expression(sapply(seq(60, 120, by = 60), function(x) { bquote(.(x)*degree * E) } )),
-                                               bquote(180*degree)))
+    ggplot2::scale_x_continuous(
+        "", expand = c(0,0), 
+        breaks = if (facet) seq(-180, 120, 60) else seq(-180, 180, 60),
+        labels = if (!using.tizk()) {
+                     if (facet) {
+                         c(bquote(180*degree),
+                           as.expression(sapply(seq(-120, -60, by = 60), function(x) { x <- -x; bquote(.(x)*degree * W) } )),
+                           0,
+                           as.expression(sapply(seq(60, 120, by = 60), function(x) { bquote(.(x)*degree * E) } )))
+                     } else {
+                         c(bquote(180*degree),
+                           as.expression(sapply(seq(-120, -60, by = 60), function(x) { x <- -x; bquote(.(x)*degree * W) } )),
+                           0,
+                           as.expression(sapply(seq(60, 120, by = 60), function(x) { bquote(.(x)*degree * E) } )),
+                           bquote(180*degree))
+                     }
+                 } else {
+                     if (facet) {
+                         c("$180\\degree$",
+                           sapply(seq(-120, -60, by = 60), function(x) { sprintf("$%d\\degree$W", -x) }),
+                           0,
+                           sapply(seq(60, 120, by = 60), function(x) { sprintf("$%d\\degree$E", x) }))
+                     } else {
+                         c("$180\\degree$",
+                           sapply(seq(-120, -60, by = 60), function(x) { sprintf("$%d\\degree$W", -x) }),
+                           0,
+                           sapply(seq(60, 120, by = 60), function(x) { sprintf("$%d\\degree$E", x) }),
+                           "$180\\degree$")
+                     }
+                 }
+    )
 }
 
 #' @describeIn scale_geo latitude (y) axis
 #' @export
 scale_y_geo <- function() {
-    ggplot2::scale_y_continuous("", expand = c(0,0), breaks = -2:2 * 30, 
-                               labels = c(as.expression(sapply(c(-60, -30), function(x) { x <- -x; bquote(.(x)*degree * S) } )),
-                                          0,
-                                          as.expression(sapply(c(30, 60), function(x) { bquote(.(x)*degree * N) } )))) 
+    ggplot2::scale_y_continuous(
+        "", expand = c(0,0), breaks = -2:2 * 30, 
+        labels = if (!using.tizk()) {
+                     c(as.expression(sapply(c(-60, -30), function(x) { x <- -x; bquote(.(x)*degree * S) } )),
+                       0,
+                       as.expression(sapply(c(30, 60), function(x) { bquote(.(x)*degree * N) } )))
+                 } else {
+                     c(as.expression(sapply(c(-60, -30), function(x) { sprintf("$%d\\degree$S", -x) })),
+                       0,
+                       as.expression(sapply(c(30, 60), function(x) { sprintf("$%d\\degree$N", x) })))
+                 }
+    )
 }
 
 #' @describeIn scale_geo latitude (x) axis for zonal-mean plots
 #' @export
 scale_x_geo_zonmean <- function() {
-    ggplot2::scale_x_continuous("", expand = c(0,0), breaks = -1:1 * 60, 
-                               labels = c(as.expression(sapply(c(-60), function(x) { x <- -x; bquote(.(x)*degree * S) } )),
-                                          0,
-                                          as.expression(sapply(c(60), function(x) { bquote(.(x)*degree * N) } ))))
+    ggplot2::scale_x_continuous(
+        "", expand = c(0,0), breaks = -1:1 * 60, 
+        labels = if (!using.tizk()) {
+                     c(as.expression(sapply(c(-60), function(x) { x <- -x; bquote(.(x)*degree * S) } )),
+                       0,
+                       as.expression(sapply(c(60), function(x) { bquote(.(x)*degree * N) } )))
+                 } else {
+                     c(as.expression(sapply(c(-60, -30), function(x) { sprintf("$%d\\degree$S", -x) })),
+                       0,
+                       as.expression(sapply(c(30, 60), function(x) { sprintf("$%d\\degree$N", x) })))
+                 }
+    )
 }
 
 #' World map outline 
