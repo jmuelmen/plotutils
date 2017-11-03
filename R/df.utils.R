@@ -71,9 +71,9 @@ bin_ <- function(df, var, varname, bins) {
 #'     or ordered factor.
 #' @export
 discretize <- function(df, var, bins, as_factor = FALSE) {
-    x <- lazyeval::lazy(var)
+    x <- substitute(var)
     bins <- lazyeval::lazy(bins)
-    discretize_(df, x, as.character(x$expr), bins, as_factor)
+    discretize_(df, x, as.character(x), bins, as_factor)
 }
 
 discretize_ <- function(df, var, varname, bins, as_factor) {
