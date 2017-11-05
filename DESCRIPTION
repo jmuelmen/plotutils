@@ -1,9 +1,11 @@
 Package: plotutils
 Type: Package
 Title: Some Handy Tools for (gg)plotting
-Version: 1.01
+Version: 1.02
 Date: 2016-08-14
 Author: Johannes Muelmenstaedt
+Authors@R: person("Johannes", "Muelmenstaedt", , "johannes.muelmenstaedt@uni-leipzig.de",
+	   role = c("aut", "cre"))
 Maintainer: Johannes Muelmenstaedt <johannes.muelmenstaedt@uni-leipzig.de>
 Description: More details about what the package does. See <http://http://
     cran.r-project.org/doc/manuals/r-release/R-exts.html#The-DESCRIPTION-file> for
@@ -11,4 +13,4 @@ Description: More details about what the package does. See <http://http://
 License: GPL (>= 2)
 Depends: R (>= 2.10)
 Imports: ggplot2, lazyeval
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

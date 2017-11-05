@@ -7,7 +7,7 @@
 \usage{
 bin(df, var, bins)
 
-discretize(df, var, bins, as_factor = FALSE)
+discretize(df, var, bins, as_factor = FALSE, equal_contents = FALSE)
 }
 \arguments{
 \item{df}{Data frame.  Evaluation occurs with \code{df} as the
@@ -27,6 +27,10 @@ Return discretized values as numeric (\code{as_factor =
 FALSE}), or as factor (\code{as_factor = TRUE}) in the style of
 \code{cut()}, or as an ordered factor (\code{as_factor =
 "ordered"}).}
+
+\item{equal_contents}{(for \code{discretize()}.) Logical.  If
+binning is specified as a number of bins, select bin boundaries
+that result in \code{bins} bins of equal contents}
 }
 \value{
 A data frame that contains \code{df} and two new variables,

@@ -63,6 +63,9 @@ bin_ <- function(df, var, varname, bins) {
 #'     FALSE}), or as factor (\code{as_factor = TRUE}) in the style of
 #'     \code{cut()}, or as an ordered factor (\code{as_factor =
 #'     "ordered"}).
+#' @param equal_contents (for \code{discretize()}.) Logical.  If
+#'     binning is specified as a number of bins, select bin boundaries
+#'     that result in \code{bins} bins of equal contents
 #' @return A data frame with "var" replaced by its discretized version
 #' @describeIn bin The functions \code{bin()} and \code{discretize()}
 #'     differ in their return values: \code{bin()} adds two new
@@ -70,13 +73,13 @@ bin_ <- function(df, var, varname, bins) {
 #'     "var" with its discretized version, either as numeric, factor,
 #'     or ordered factor.
 #' @export
-discretize <- function(df, var, bins, as_factor = FALSE) {
+discretize <- function(df, var, bins, as_factor = FALSE, equal_contents = FALSE) {
     x <- substitute(var)
     bins <- lazyeval::lazy(bins)
-    discretize_(df, x, as.character(x), bins, as_factor)
+    discretize_(df, x, as.character(x), bins, as_factor, equal_contents)
 }
 
-discretize_ <- function(df, var, varname, bins, as_factor) {
+discretize_ <- function(df, var, varname, bins, as_factor, equal_contents) {
     ## if (require(lazyeval))
     ##     x <- lazyeval::lazy_eval(var, df)
     ## else x <- var
@@ -85,7 +88,11 @@ discretize_ <- function(df, var, varname, bins, as_factor) {
     bins <- lazyeval::lazy_eval(bins, df)
     
     if (length(bins) == 1) {
-        bins <- pretty(range(x, na.rm = TRUE), bins)
+        if (!equal_contents) {
+            bins <- pretty(range(x, na.rm = TRUE), bins)
+        } else {
+            bins <- unique(quantile(x, seq(0, 1, length.out = bins + 1)))
+        }
     }
     if (class(as_factor) == "character" ||
         class(as_factor) == "logical" && as_factor) {

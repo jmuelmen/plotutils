@@ -3,8 +3,8 @@
 \name{scale_geo}
 \alias{scale_geo}
 \alias{scale_x_geo}
-\alias{scale_x_geo_zonmean}
 \alias{scale_y_geo}
+\alias{scale_x_geo_zonmean}
 \title{Geographic scales (with degree labels)}
 \usage{
 scale_x_geo(facet = FALSE)

@@ -30,4 +30,7 @@ function to prepare your data frame for a grouped
 as a \code{\link{geom_polygon}} that can be added to a geographical
 \code{\link{ggplot}}
 }
+\author{
+\strong{Maintainer}: Johannes Muelmenstaedt \email{johannes.muelmenstaedt@uni-leipzig.de}
 
+}

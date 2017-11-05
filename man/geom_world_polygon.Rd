@@ -35,4 +35,3 @@ expand.grid(lon = -180:180, lat = -90:90) \%>\%
     geom_world_polygon() +
     scale_x_geo() + scale_y_geo()
 }
-
