@@ -1,5 +1,3 @@
-## Function to bin variables in a data frame
-
 #' Bin a variable in a data frame
 #' 
 #' The data frame is expanded by the bin center and bin width.  "var"
@@ -112,4 +110,48 @@ discretize_ <- function(df, var, varname, bins, as_factor, equal_contents) {
     }
     df[, varname] <- x.pos
     df
+}
+
+#' Interpolate lon/lat data frame onto another lon/lat grid
+#' 
+#' Arguments are two data frames that represent (data on) a reular
+#' lon/lat grid, i.e., that are of the form \code{df.src <- mutate(expand.grid(lon = lon, lat = lat), ...)}
+#' 
+#' @param df.src Data frame.  Specifies the data to be interpolated.
+#'     Must contain the variables \code{lon} and \code{lat}.
+#' @param df.dest Data frame.  Specifies the lon/lat grid to be used
+#'     for interpolation.  Must contain the variables \code{lon} and
+#'     \code{lat}.
+#' @return A data frame that contains the data from df.src
+#'     interpolated onto the df.dest grid
+#' @export
+remap <- function(df.src, df.dest) {
+    lon.src <- unique(df.src$lon)
+    lat.src <- unique(df.src$lat)
+    df.dest <- expand.grid(lon = unique(df.dest$lon),
+                           lat = unique(df.dest$lat))
+
+    if (!requireNamespace("akima"))
+        return(NULL)
+
+    df.src %>%
+        tidyr::gather(plotutils_remap_variables_key,
+                      plotutils_remap_variables_value,
+                      -c(lon, lat)) %>%
+        plyr::ddply(~ plotutils_remap_variables_key, function(x) {
+            if (any(is.na(x$plotutils_remap_variables_value)))
+                return(NULL)
+            print(x$plotutils_remap_variables_key[1])
+            akima::bicubic(lon.src, lat.src,
+                           matrix(x$plotutils_remap_variables_value,
+                                  length(lon.src), length(lat.src),
+                                  byrow = TRUE),
+                           df.dest$lon, df.dest$lat) %>%
+                transform() %>%
+                dplyr::rename(lon = x,
+                              lat = y,
+                              plotutils_remap_variables_value = z)
+        }) %>%
+        tidyr::spread(plotutils_remap_variables_key,
+                      plotutils_remap_variables_value)
 }

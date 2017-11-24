@@ -3,6 +3,7 @@
 export(bin)
 export(discretize)
 export(geom_world_polygon)
+export(remap)
 export(scale_x_geo)
 export(scale_x_geo_zonmean)
 export(scale_y_geo)
