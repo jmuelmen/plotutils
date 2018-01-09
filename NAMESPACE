@@ -2,6 +2,7 @@
 
 export(bin)
 export(discretize)
+export(dist.gc)
 export(geom_world_polygon)
 export(remap)
 export(scale_x_geo)
