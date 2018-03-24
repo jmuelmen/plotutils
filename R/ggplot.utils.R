@@ -17,7 +17,11 @@ using.tizk <- function() any(grepl("tikz", names(dev.cur())))
 scale_x_geo <- function(facet = FALSE) {
     ggplot2::scale_x_continuous(
         "", expand = c(0,0), 
-        breaks = if (facet) seq(-180, 120, 60) else seq(-180, 180, 60),
+        breaks = if (!using.tizk()) {
+                     if (facet) seq(-180, 120, 60) else seq(-180, 180, 60)
+                 } else {
+                     seq(-120, 120, 120)
+                 },
         labels = if (!using.tizk()) {
                      if (facet) {
                          c(bquote(180*degree),
@@ -32,18 +36,9 @@ scale_x_geo <- function(facet = FALSE) {
                            bquote(180*degree))
                      }
                  } else {
-                     if (facet) {
-                         c("$180\\degree$",
-                           sapply(seq(-120, -60, by = 60), function(x) { sprintf("$%d\\degree$W", -x) }),
-                           0,
-                           sapply(seq(60, 120, by = 60), function(x) { sprintf("$%d\\degree$E", x) }))
-                     } else {
-                         c("$180\\degree$",
-                           sapply(seq(-120, -60, by = 60), function(x) { sprintf("$%d\\degree$W", -x) }),
-                           0,
-                           sapply(seq(60, 120, by = 60), function(x) { sprintf("$%d\\degree$E", x) }),
-                           "$180\\degree$")
-                     }
+                     c(sapply(c(-120), function(x) { sprintf("$%d\\degree$W", -x) }),
+                       0,
+                       sapply(c(120), function(x) { sprintf("$%d\\degree$E", x) }))
                  }
     )
 }
@@ -52,15 +47,20 @@ scale_x_geo <- function(facet = FALSE) {
 #' @export
 scale_y_geo <- function() {
     ggplot2::scale_y_continuous(
-        "", expand = c(0,0), breaks = -2:2 * 30, 
+                 "", expand = c(0,0),
+                 breaks = if (!using.tizk()) {
+                              -2:2 * 30
+                          } else {
+                              -1:1 * 60
+                          },
         labels = if (!using.tizk()) {
                      c(as.expression(sapply(c(-60, -30), function(x) { x <- -x; bquote(.(x)*degree * S) } )),
                        0,
                        as.expression(sapply(c(30, 60), function(x) { bquote(.(x)*degree * N) } )))
                  } else {
-                     c(as.expression(sapply(c(-60, -30), function(x) { sprintf("$%d\\degree$S", -x) })),
+                     c(as.expression(sapply(c(-60), function(x) { sprintf("$%d\\degree$S", -x) })),
                        0,
-                       as.expression(sapply(c(30, 60), function(x) { sprintf("$%d\\degree$N", x) })))
+                       as.expression(sapply(c(60), function(x) { sprintf("$%d\\degree$N", x) })))
                  }
     )
 }
