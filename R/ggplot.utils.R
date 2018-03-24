@@ -109,18 +109,18 @@ geom_world_polygon <- function(col = "black", fill = NA, lwd = 0.5, highres = FA
     ggplot2::geom_polygon(ggplot2::aes(x=long, y=lat, group=group),
                           data = if (highres) {
                                      rbind(ggplot2::fortify(shp.highres) %>%
-                                           mutate(id = sprintf("land.%s", id),
-                                                  group = sprintf("land.%s", group)),
+                                           dplyr::mutate(id = sprintf("land.%s", id),
+                                                         group = sprintf("land.%s", group)),
                                            ggplot2::fortify(shp.highres.lakes) %>%
-                                           mutate(id = sprintf("lakes.%s", id),
-                                                  group = sprintf("lakes.%s", group)))
+                                           dplyr::mutate(id = sprintf("lakes.%s", id),
+                                                         group = sprintf("lakes.%s", group)))
                                  } else {
                                      rbind(ggplot2::fortify(shp) %>%
-                                           mutate(id = sprintf("land.%s", id),
-                                                  group = sprintf("land.%s", group)),
+                                           dplyr::mutate(id = sprintf("land.%s", id),
+                                                         group = sprintf("land.%s", group)),
                                            ggplot2::fortify(shp.lakes) %>%
-                                           mutate(id = sprintf("lakes.%s", id),
-                                                  group = sprintf("lakes.%s", group)))
+                                           dplyr::mutate(id = sprintf("lakes.%s", id),
+                                                         group = sprintf("lakes.%s", group)))
                                  },
                           col = col, fill = fill, lwd = lwd, ...)
 }
