@@ -125,7 +125,7 @@ discretize_ <- function(df, var, varname, bins, as_factor, equal_contents) {
 #' @return A data frame that contains the data from df.src
 #'     interpolated onto the df.dest grid
 #' @export
-remap <- function(df.src, df.dest) {
+remap <- function(df.src, df.dest, fill = 0) {
     lon.src <- unique(df.src$lon)
     lat.src <- unique(df.src$lat)
     df.dest <- expand.grid(lon = unique(df.dest$lon),
@@ -145,9 +145,13 @@ remap <- function(df.src, df.dest) {
         tidyr::gather(plotutils_remap_variables_key,
                       plotutils_remap_variables_value,
                       -c(lon, lat)) %>%
+        dplyr::mutate(plotutils_remap_variables_value =
+                          replace(plotutils_remap_variables_value,
+                                  is.na(plotutils_remap_variables_value),
+                                  fill)) %>%
         plyr::ddply(~ plotutils_remap_variables_key, function(x) {
-            if (any(is.na(x$plotutils_remap_variables_value)))
-                return(NULL)
+            ## if (any(is.na(x$plotutils_remap_variables_value)))
+            ##     return(NULL)
             print(x$plotutils_remap_variables_key[1])
             akima::interpp(df.template$lon, df.template$lat,
                            matrix(x$plotutils_remap_variables_value,
