@@ -4,7 +4,7 @@
 \alias{remap}
 \title{Interpolate lon/lat data frame onto another lon/lat grid}
 \usage{
-remap(df.src, df.dest)
+remap(df.src, df.dest, fill = 0)
 }
 \arguments{
 \item{df.src}{Data frame.  Specifies the data to be interpolated.
@@ -13,10 +13,13 @@ Must contain the variables \code{lon} and \code{lat}.}
 \item{df.dest}{Data frame.  Specifies the lon/lat grid to be used
 for interpolation.  Must contain the variables \code{lon} and
 \code{lat}.}
+
+\item{fill}{Numeric.  Fill NA rows with this value, as NA is not
+allowed in the interpolation functions.}
 }
 \value{
 A data frame that contains the data from df.src
-    interpolated onto the df.dest grid
+    interpolated onto the df.dest grid.
 }
 \description{
 Arguments are two data frames that represent (data on) a reular

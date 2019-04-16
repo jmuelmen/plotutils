@@ -122,8 +122,10 @@ discretize_ <- function(df, var, varname, bins, as_factor, equal_contents) {
 #' @param df.dest Data frame.  Specifies the lon/lat grid to be used
 #'     for interpolation.  Must contain the variables \code{lon} and
 #'     \code{lat}.
+#' @param fill Numeric.  Fill NA rows with this value, as NA is not
+#'     allowed in the interpolation functions.
 #' @return A data frame that contains the data from df.src
-#'     interpolated onto the df.dest grid
+#'     interpolated onto the df.dest grid.
 #' @export
 remap <- function(df.src, df.dest, fill = 0) {
     lon.src <- unique(df.src$lon)
