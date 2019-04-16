@@ -129,12 +129,19 @@ remap <- function(df.src, df.dest) {
     lon.src <- unique(df.src$lon)
     lat.src <- unique(df.src$lat)
     df.dest <- expand.grid(lon = unique(df.dest$lon),
-                           lat = unique(df.dest$lat))
+                           lat = unique(df.dest$lat)) %>%
+        dplyr::arrange(lon, lat)
 
     if (!requireNamespace("akima"))
         return(NULL)
 
+    df.template <- expand.grid(lon = unique(df.src$lon),
+                               lat = unique(df.src$lat)) %>%
+        dplyr::arrange(lon, lat)
+    
     df.src %>%
+        dplyr::full_join(df.template, by = c("lon", "lat")) %>%
+        dplyr::arrange(lon, lat) %>% 
         tidyr::gather(plotutils_remap_variables_key,
                       plotutils_remap_variables_value,
                       -c(lon, lat)) %>%
@@ -142,11 +149,11 @@ remap <- function(df.src, df.dest) {
             if (any(is.na(x$plotutils_remap_variables_value)))
                 return(NULL)
             print(x$plotutils_remap_variables_key[1])
-            akima::bicubic(lon.src, lat.src,
+            akima::interpp(df.template$lon, df.template$lat,
                            matrix(x$plotutils_remap_variables_value,
                                   length(lon.src), length(lat.src),
-                                  byrow = TRUE),
-                           df.dest$lon, df.dest$lat) %>%
+                                  byrow = FALSE),
+                           df.dest$lon, df.dest$lat, linear = TRUE) %>%
                 transform() %>%
                 dplyr::rename(lon = x,
                               lat = y,
