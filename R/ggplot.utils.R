@@ -75,9 +75,9 @@ scale_x_geo_zonmean <- function() {
                        0,
                        as.expression(sapply(c(60), function(x) { bquote(.(x)*degree * N) } )))
                  } else {
-                     c(as.expression(sapply(c(-60, -30), function(x) { sprintf("$%d\\degree$S", -x) })),
+                     c(as.expression(sapply(c(-60), function(x) { sprintf("$%d\\degree$S", -x) })),
                        0,
-                       as.expression(sapply(c(30, 60), function(x) { sprintf("$%d\\degree$N", x) })))
+                       as.expression(sapply(c(60), function(x) { sprintf("$%d\\degree$N", x) })))
                  }
     )
 }
