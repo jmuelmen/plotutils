@@ -1,8 +1,8 @@
 Package: plotutils
 Type: Package
 Title: Some Handy Tools for (gg)plotting
-Version: 1.12
-Date: 2019-04-16
+Version: 1.13
+Date: 2020-02-16
 Author: Johannes Muelmenstaedt
 Authors@R: person("Johannes", "Muelmenstaedt", , "johannes.muelmenstaedt@uni-leipzig.de",
 	   role = c("aut", "cre"))
