@@ -197,3 +197,37 @@ dist.gc <- function(lon1, lon2, lat1, lat2) {
     dist <- 2 * re * asin(pmin(pmax(theta, 0), 1))
     dist
 }
+
+#' Read a list of variables from a NetCDF file and return them as a data.frame
+#'
+#' @param nc ncdf4 NetCDF object
+#' @param vars Vector of variable names
+#' @return data.frame of NetCDF contents as vectors with variable
+#'     names as column names
+#'
+#' @export
+#'
+#' @examples
+#' 
+nc.to.df <- function(nc, vars) {
+    df <- plyr::ldply(vars, function(var) {
+        ## get values
+        x <- ncdf4::ncvar_get(nc, var)
+        ## get dimensions
+        dim.names <- plyr::laply(nc$var[[var]]$dim, function(i) {
+            i$name
+        })
+        ## str(dim.names)
+        dim.vals <- plyr::llply(nc$var[[var]]$dim, function(i) {
+            i$vals
+        })
+        names(dim.vals) <- dim.names
+        ## str(dim.vals)
+        ## expand dimensions, attach values, tag by var name
+        dplyr::mutate(expand.grid(dim.vals),
+                      x = as.vector(x),
+                      name = var)
+    })
+    ## spread the values into the named columns
+    tidyr::spread(df, name, x)
+}
