@@ -4,8 +4,7 @@
 \alias{geom_world_polygon}
 \title{World map outline}
 \usage{
-geom_world_polygon(col = "black", fill = NA, lwd = 0.5, highres = FALSE,
-  ...)
+geom_world_polygon(col = "black", fill = NA, lwd = 0.5, highres = FALSE, ...)
 }
 \arguments{
 \item{col}{Line color}
