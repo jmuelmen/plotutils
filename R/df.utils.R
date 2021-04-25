@@ -202,6 +202,7 @@ dist.gc <- function(lon1, lon2, lat1, lat2) {
 #'
 #' @param nc ncdf4 NetCDF object
 #' @param vars Vector of variable names
+#' @param spread spread variables into columns?
 #' @return data.frame of NetCDF contents as vectors with variable
 #'     names as column names
 #'
@@ -209,7 +210,7 @@ dist.gc <- function(lon1, lon2, lat1, lat2) {
 #'
 #' @examples
 #' 
-nc.to.df <- function(nc, vars) {
+nc.to.df <- function(nc, vars, spread = TRUE) {
     df <- plyr::ldply(vars, function(var) {
         ## get values
         x <- ncdf4::ncvar_get(nc, var)
@@ -229,5 +230,9 @@ nc.to.df <- function(nc, vars) {
                       name = var)
     })
     ## spread the values into the named columns
-    tidyr::spread(df, name, x)
+    if (spread) {
+        tidyr::spread(df, name, x)
+    } else {
+        df
+    }
 }
