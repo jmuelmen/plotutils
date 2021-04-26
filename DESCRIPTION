@@ -1,7 +1,7 @@
 Package: plotutils
 Type: Package
 Title: Some Handy Tools for (gg)plotting
-Version: 1.13
+Version: 1.14
 Date: 2021-04-25
 Author: Johannes Muelmenstaedt
 Authors@R: person("Johannes", "Muelmenstaedt", , "johannes.muelmenstaedt@uni-leipzig.de",
