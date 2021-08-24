@@ -169,6 +169,58 @@ remap <- function(df.src, df.dest, fill = 0) {
                       plotutils_remap_variables_value)
 }
 
+#' Interpolate "unstructured" data frame onto lon/lat grid
+#' 
+#' Arguments are two data frames.  The source is on an "unstructured"
+#' grid, i.e., one not rectangular in lon/lat space.  The destination
+#' is a lon/lat grid, i.e., of the form \code{df.src <-
+#' mutate(expand.grid(lon = lon, lat = lat), ...)}
+#' 
+#' @param df.src Data frame.  Specifies the data to be interpolated.
+#'     Must contain the variables \code{lon} and \code{lat}.
+#' @param df.dest Data frame.  Specifies the lon/lat grid to be used
+#'     for interpolation.  Must contain the variables \code{lon} and
+#'     \code{lat}.
+#' @param fill Numeric.  Fill NA rows with this value, as NA is not
+#'     allowed in the interpolation functions.
+#' @return A data frame that contains the data from df.src
+#'     interpolated onto the df.dest grid.
+#' @export
+remap_unstructured <- function(df.src, df.dest, fill = 0) {
+    lon.src <- unique(df.src$lon)
+    lat.src <- unique(df.src$lat)
+    df.dest <- expand.grid(lon = unique(df.dest$lon),
+                           lat = unique(df.dest$lat)) %>%
+        dplyr::arrange(lon, lat)
+
+    if (!requireNamespace("akima"))
+        return(NULL)
+
+    df.src %>%
+        dplyr::arrange(lon, lat) %>% 
+        tidyr::gather(plotutils_remap_variables_key,
+                      plotutils_remap_variables_value,
+                      -c(lon, lat)) %>%
+        dplyr::mutate(plotutils_remap_variables_value =
+                          replace(plotutils_remap_variables_value,
+                                  is.na(plotutils_remap_variables_value),
+                                  fill)) %>%
+        plyr::ddply(~ plotutils_remap_variables_key, function(x) {
+            ## if (any(is.na(x$plotutils_remap_variables_value)))
+            ##     return(NULL)
+            print(x$plotutils_remap_variables_key[1])
+            akima::interpp(x$lon, x$lat,
+                           x$plotutils_remap_variables_value,
+                           df.dest$lon, df.dest$lat, linear = TRUE, duplicate = "mean") %>%
+                transform() %>%
+                dplyr::rename(lon = x,
+                              lat = y,
+                              plotutils_remap_variables_value = z)
+        }) %>%
+        tidyr::spread(plotutils_remap_variables_key,
+                      plotutils_remap_variables_value)
+}
+
 #' Great-circle distances
 #'
 #' Calculate great-circle distances based on the haversin formula
