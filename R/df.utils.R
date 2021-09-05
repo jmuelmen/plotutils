@@ -283,7 +283,7 @@ nc.to.df <- function(nc, vars, spread = TRUE, na.rm = FALSE, mask) {
         names(dim.vals) <- dim.names
         ## str(dim.vals)
         ## expand dimensions, attach values, tag by var name
-        dplyr::mutate(expand.grid(dim.vals),
+        df <- dplyr::mutate(expand.grid(dim.vals, KEEP.OUT.ATTRS = FALSE),
                       x = as.vector(x),
                       name = var)
         ## if requested, mask input
@@ -298,8 +298,7 @@ nc.to.df <- function(nc, vars, spread = TRUE, na.rm = FALSE, mask) {
     })
     ## spread the values into the named columns
     if (spread) {
-        tidyr::spread(df, name, x)
-    } else {
-        df
-    }
+        df %<>% tidyr::pivot_wider(names_from = name, values_from = x)
+    } 
+    return(df)
 }
