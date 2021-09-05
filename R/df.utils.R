@@ -254,7 +254,9 @@ dist.gc <- function(lon1, lon2, lat1, lat2) {
 #'
 #' @param nc ncdf4 NetCDF object
 #' @param vars Vector of variable names
-#' @param spread spread variables into columns?
+#' @param spread Spread variables into columns?
+#' @param na.rm Remove NA input rows?
+#' @param mask (Optional) logical vector; FALSE means discard the corresponding data value
 #' @return data.frame of NetCDF contents as vectors with variable
 #'     names as column names
 #'
@@ -262,8 +264,12 @@ dist.gc <- function(lon1, lon2, lat1, lat2) {
 #'
 #' @examples
 #' 
-nc.to.df <- function(nc, vars, spread = TRUE) {
+nc.to.df <- function(nc, vars, spread = TRUE, na.rm = FALSE, mask) {
+    if (missing(mask)) {
+        mask <- NULL
+    }
     df <- plyr::ldply(vars, function(var) {
+        gc()
         ## get values
         x <- ncdf4::ncvar_get(nc, var)
         ## get dimensions
@@ -280,6 +286,15 @@ nc.to.df <- function(nc, vars, spread = TRUE) {
         dplyr::mutate(expand.grid(dim.vals),
                       x = as.vector(x),
                       name = var)
+        ## if requested, mask input
+        if (!is.null(mask)) {
+            df <- df[mask,]
+        }
+        ## if requested, remove NA inputs
+        if (na.rm) {
+            df %<>% dplyr::filter(!is.na(x))
+        } 
+        return(df)
     })
     ## spread the values into the named columns
     if (spread) {

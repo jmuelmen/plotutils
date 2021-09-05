@@ -4,14 +4,18 @@
 \alias{nc.to.df}
 \title{Read a list of variables from a NetCDF file and return them as a data.frame}
 \usage{
-nc.to.df(nc, vars, spread = TRUE)
+nc.to.df(nc, vars, spread = TRUE, na.rm = FALSE, mask)
 }
 \arguments{
 \item{nc}{ncdf4 NetCDF object}
 
 \item{vars}{Vector of variable names}
 
-\item{spread}{spread variables into columns?}
+\item{spread}{Spread variables into columns?}
+
+\item{na.rm}{Remove NA input rows?}
+
+\item{mask}{(Optional) logical vector; FALSE means discard the corresponding data value}
 }
 \value{
 data.frame of NetCDF contents as vectors with variable
