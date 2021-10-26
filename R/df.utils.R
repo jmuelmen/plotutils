@@ -271,7 +271,7 @@ nc.to.df <- function(nc, vars, spread = TRUE, na.rm = FALSE, mask) {
     df <- plyr::ldply(vars, function(var) {
         gc()
         ## get values
-        x <- ncdf4::ncvar_get(nc, var)
+        .var_val <- ncdf4::ncvar_get(nc, var)
         ## get dimensions
         dim.names <- plyr::laply(nc$var[[var]]$dim, function(i) {
             i$name
@@ -284,7 +284,7 @@ nc.to.df <- function(nc, vars, spread = TRUE, na.rm = FALSE, mask) {
         ## str(dim.vals)
         ## expand dimensions, attach values, tag by var name
         df <- dplyr::mutate(expand.grid(dim.vals, KEEP.OUT.ATTRS = FALSE),
-                      x = as.vector(x),
+                      .var_val = as.vector(.var_val),
                       name = var)
         ## if requested, mask input
         if (!is.null(mask)) {
@@ -292,13 +292,13 @@ nc.to.df <- function(nc, vars, spread = TRUE, na.rm = FALSE, mask) {
         }
         ## if requested, remove NA inputs
         if (na.rm) {
-            df %<>% dplyr::filter(!is.na(x))
+            df %<>% dplyr::filter(!is.na(.var_val))
         } 
         return(df)
     })
     ## spread the values into the named columns
     if (spread) {
-        df %<>% tidyr::pivot_wider(names_from = name, values_from = x)
+        df %<>% tidyr::pivot_wider(names_from = name, values_from = .var_val)
     } 
     return(df)
 }
