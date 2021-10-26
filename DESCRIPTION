@@ -13,5 +13,5 @@ Description: More details about what the package does. See <http://http://
 Encoding: UTF-8
 License: GPL (>= 2)
 Depends: R (>= 2.10)
-Imports: ggplot2, lazyeval, akima, tidyr, ncdf4
+Imports: ggplot2, lazyeval, akima, tidyr, ncdf4, magrittr
 RoxygenNote: 7.1.1
