@@ -257,6 +257,7 @@ dist.gc <- function(lon1, lon2, lat1, lat2) {
 #' @param spread Spread variables into columns?
 #' @param na.rm Remove NA input rows?
 #' @param mask (Optional) logical vector; FALSE means discard the corresponding data value
+#' @param start, count (Optional) start and count are passed to @code{ncvar_get}
 #' @return data.frame of NetCDF contents as vectors with variable
 #'     names as column names
 #'
@@ -264,26 +265,41 @@ dist.gc <- function(lon1, lon2, lat1, lat2) {
 #'
 #' @examples
 #' 
-nc.to.df <- function(nc, vars, spread = TRUE, na.rm = FALSE, mask) {
 #' @importFrom magrittr %<>%
 #' 
+nc.to.df <- function(nc, vars, spread = TRUE, na.rm = FALSE, mask = NULL, start = NA, count = NA) {
     if (missing(mask)) {
         mask <- NULL
     }
     df <- plyr::ldply(vars, function(var) {
         gc()
         ## get values
-        .var_val <- ncdf4::ncvar_get(nc, var)
+        .var_val <- ncdf4::ncvar_get(nc, var, start, count)
         ## get dimensions
         dim.names <- plyr::laply(nc$var[[var]]$dim, function(i) {
             i$name
         })
-        ## str(dim.names)
         dim.vals <- plyr::llply(nc$var[[var]]$dim, function(i) {
             i$vals
         })
         names(dim.vals) <- dim.names
-        ## str(dim.vals)
+        ## remove entries that were not requested
+        if (!is.na(start) && !is.na(count)) {
+            for (.i in (1 : length(start))) {
+                if (start[.i] > 0) {
+                    dim.vals[[.i]] <- dim.vals[[.i]][
+                        min(start[.i], length(dim.vals[[.i]])) :
+                        if (count[.i] > 0) {
+                            max(min(start[.i] + (count[.i] - 1),
+                                    length(dim.vals[[.i]])),
+                                start[.i])
+                        } else {
+                            length(dim.vals[[.i]])
+                        }
+                    ]
+                }
+            }
+        }
         ## expand dimensions, attach values, tag by var name
         df <- dplyr::mutate(expand.grid(dim.vals, KEEP.OUT.ATTRS = FALSE),
                       .var_val = as.vector(.var_val),

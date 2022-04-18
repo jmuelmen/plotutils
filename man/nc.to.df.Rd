@@ -4,7 +4,15 @@
 \alias{nc.to.df}
 \title{Read a list of variables from a NetCDF file and return them as a data.frame}
 \usage{
-nc.to.df(nc, vars, spread = TRUE, na.rm = FALSE, mask)
+nc.to.df(
+  nc,
+  vars,
+  spread = TRUE,
+  na.rm = FALSE,
+  mask = NULL,
+  start = NA,
+  count = NA
+)
 }
 \arguments{
 \item{nc}{ncdf4 NetCDF object}
@@ -16,6 +24,8 @@ nc.to.df(nc, vars, spread = TRUE, na.rm = FALSE, mask)
 \item{na.rm}{Remove NA input rows?}
 
 \item{mask}{(Optional) logical vector; FALSE means discard the corresponding data value}
+
+\item{start, }{count (Optional) start and count are passed to @code{ncvar_get}}
 }
 \value{
 data.frame of NetCDF contents as vectors with variable
