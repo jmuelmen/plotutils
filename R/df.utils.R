@@ -265,6 +265,8 @@ dist.gc <- function(lon1, lon2, lat1, lat2) {
 #' @examples
 #' 
 nc.to.df <- function(nc, vars, spread = TRUE, na.rm = FALSE, mask) {
+#' @importFrom magrittr %<>%
+#' 
     if (missing(mask)) {
         mask <- NULL
     }
